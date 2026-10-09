@@ -12,6 +12,7 @@ class HsePpeStockTransaction extends Model
     protected $fillable = [
         'ppe_item_id',
         'jenis_transaksi',
+        'arah_penyesuaian',
         'jumlah',
         'tanggal_transaksi',
         'recipient_employee_id',

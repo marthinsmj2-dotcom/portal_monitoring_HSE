@@ -5,32 +5,48 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\HseCorrectiveAction;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class HseCorrectiveActionController extends Controller
 {
-    public function index(Request $request)
+    private function relations(): array
     {
-        $query = HseCorrectiveAction::with([
+        return [
             'finding.category',
             'finding.riskLevel',
+            'verifiedBy',
+        ];
+    }
+
+    public function index(Request $request)
+    {
+        $validated = $request->validate([
+            'finding_id' => [
+                'sometimes',
+                'integer',
+                'exists:hse_findings,id',
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                Rule::in(['OPEN', 'PROSES', 'CLOSE']),
+            ],
         ]);
 
-        if ($request->filled('finding_id')) {
-            $query->where('finding_id', $request->finding_id);
+        $query = HseCorrectiveAction::with($this->relations());
+
+        if (isset($validated['finding_id'])) {
+            $query->where('finding_id', $validated['finding_id']);
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if (isset($validated['status'])) {
+            $query->where('status', $validated['status']);
         }
-
-        $data = $query
-            ->latest()
-            ->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Data tindakan perbaikan berhasil diambil.',
-            'data' => $data,
+            'data' => $query->latest()->get(),
         ]);
     }
 
@@ -39,11 +55,13 @@ class HseCorrectiveActionController extends Controller
         $validated = $request->validate([
             'finding_id' => [
                 'required',
+                'integer',
                 'exists:hse_findings,id',
             ],
             'pic_employee_id' => [
                 'nullable',
                 'integer',
+                'min:1',
             ],
             'deskripsi_tindakan' => [
                 'required',
@@ -54,41 +72,39 @@ class HseCorrectiveActionController extends Controller
                 'date',
             ],
             'progres' => [
-                'nullable',
+                'sometimes',
+                'required',
                 'integer',
                 'min:0',
                 'max:100',
             ],
             'status' => [
-                'nullable',
-                'in:OPEN,PROSES,CLOSE',
+                'sometimes',
+                'required',
+                Rule::in(['OPEN', 'PROSES', 'CLOSE']),
             ],
         ]);
 
+        $progres = $validated['progres'] ?? 0;
+        $status = $validated['status'] ?? 'OPEN';
+
+          if ($status === 'CLOSE' && (int) $progres !== 100) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Progres harus 100% sebelum tindakan ditutup.',
+            ], 422);
+        }
+
         $data = HseCorrectiveAction::create([
-            'finding_id' =>
-                $validated['finding_id'],
-
-            'pic_employee_id' =>
-                $validated['pic_employee_id'] ?? null,
-
-            'deskripsi_tindakan' =>
-                $validated['deskripsi_tindakan'],
-
-            'target_date' =>
-                $validated['target_date'] ?? null,
-
-            'progres' =>
-                $validated['progres'] ?? 0,
-
-            'status' =>
-                $validated['status'] ?? 'OPEN',
+            'finding_id' => $validated['finding_id'],
+            'pic_employee_id' => $validated['pic_employee_id'] ?? null,
+            'deskripsi_tindakan' => $validated['deskripsi_tindakan'],
+            'target_date' => $validated['target_date'] ?? null,
+            'progres' => $progres,
+            'status' => $status,
         ]);
 
-        $data->load([
-            'finding.category',
-            'finding.riskLevel',
-        ]);
+        $data->load($this->relations());
 
         return response()->json([
             'success' => true,
@@ -99,10 +115,7 @@ class HseCorrectiveActionController extends Controller
 
     public function show(HseCorrectiveAction $hseCorrectiveAction)
     {
-        $hseCorrectiveAction->load([
-            'finding.category',
-            'finding.riskLevel',
-        ]);
+        $hseCorrectiveAction->load($this->relations());
 
         return response()->json([
             'success' => true,
@@ -119,11 +132,14 @@ class HseCorrectiveActionController extends Controller
             'finding_id' => [
                 'sometimes',
                 'required',
+                'integer',
                 'exists:hse_findings,id',
             ],
             'pic_employee_id' => [
+                'sometimes',
                 'nullable',
                 'integer',
+                'min:1',
             ],
             'deskripsi_tindakan' => [
                 'sometimes',
@@ -131,11 +147,13 @@ class HseCorrectiveActionController extends Controller
                 'string',
             ],
             'target_date' => [
+                'sometimes',
                 'nullable',
                 'date',
             ],
             'progres' => [
-                'nullable',
+                'sometimes',
+                'required',
                 'integer',
                 'min:0',
                 'max:100',
@@ -143,16 +161,22 @@ class HseCorrectiveActionController extends Controller
             'status' => [
                 'sometimes',
                 'required',
-                'in:OPEN,PROSES,CLOSE',
+                Rule::in(['OPEN', 'PROSES', 'CLOSE']),
             ],
         ]);
 
-        $hseCorrectiveAction->update($validated);
+        $progres = $validated['progres'] ?? $hseCorrectiveAction->progres;
+        $status = $validated['status'] ?? $hseCorrectiveAction->status;
 
-        $hseCorrectiveAction->load([
-            'finding.category',
-            'finding.riskLevel',
-        ]);
+        if ($status === 'CLOSE' && (int) $progres !== 100) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Progres harus 100% sebelum tindakan ditutup.',
+            ], 422);
+        }
+
+        $hseCorrectiveAction->update($validated);
+        $hseCorrectiveAction->load($this->relations());
 
         return response()->json([
             'success' => true,
