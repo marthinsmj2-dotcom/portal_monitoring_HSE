@@ -11,8 +11,7 @@
         <p class="text-muted mb-0">{{ $subjudul }}</p>
     </div>
     <button type="button" class="btn btn-brand" data-bs-toggle="modal" data-bs-target="#modalTemuan">
-        <i class="bi bi-plus-lg me-1"></i> Tambah Temuan
-    </button>
+        <i class="bi bi-plus-lg me-1"></i> Tambah Temuan</button>
 </div>
 
 {{-- Kartu angka: hanya di halaman akumulasi --}}

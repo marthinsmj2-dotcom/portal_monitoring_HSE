@@ -3,7 +3,7 @@
 
     $daftarJenisForm = ['Safety Patrol', 'Inspeksi APAR', 'Audit 5R & Safety'];
     $daftarLokasi    = ['Workshop 2', 'Gudang Utama', 'Plant Cikarang', 'Area Fabrikasi', 'Yard Material'];
-    $daftarKaryawan  = ['Raka Pratama', 'Dian Lestari', 'Bagus Santoso', 'Nadia Putri', 'Ahmad Fauzi'];
+    $daftarKaryawan  = ['Marthin', 'Ricky', 'mbak tania', 'mbak puti', 'mbak nabila'];
 
     // Label, pilihan, dan item checklist untuk tiap jenis kegiatan
     $konfigForm = [
