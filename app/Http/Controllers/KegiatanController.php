@@ -30,9 +30,9 @@ class KegiatanController extends Controller
     private function dataKegiatan(): array
     {
         return [
-            ['nomor' => 'HSE-2506-018', 'jenis' => 'Safety Patrol',     'tanggal' => '2025-06-18', 'lokasi' => 'Workshop 2',     'petugas' => 'Raka Pratama',  'avatar' => 'gray',  'status' => 'SELESAI',        'tone' => 'green'],
-            ['nomor' => 'HSE-2506-017', 'jenis' => 'Inspeksi APAR',     'tanggal' => '2025-06-17', 'lokasi' => 'Gudang Utama',   'petugas' => 'Dian Lestari',  'avatar' => 'amber', 'status' => 'TINDAK LANJUT',  'tone' => 'amber'],
-            ['nomor' => 'HSE-2506-016', 'jenis' => 'Audit 5R & Safety', 'tanggal' => '2025-06-16', 'lokasi' => 'Plant Cikarang', 'petugas' => 'Bagus Santoso', 'avatar' => 'gray',  'status' => 'SELESAI',        'tone' => 'green'],
+            ['nomor' => 'HSE-2506-018', 'jenis' => 'Safety Patrol',     'tanggal' => '2025-06-18', 'lokasi' => 'Workshop 2',     'petugas' => 'Ricky',  'avatar' => 'gray',  'status' => 'SELESAI',        'tone' => 'green'],
+            ['nomor' => 'HSE-2506-017', 'jenis' => 'Inspeksi APAR',     'tanggal' => '2025-06-17', 'lokasi' => 'Gudang Utama',   'petugas' => 'Marthin',  'avatar' => 'amber', 'status' => 'TINDAK LANJUT',  'tone' => 'amber'],
+            ['nomor' => 'HSE-2506-016', 'jenis' => 'Audit 5R & Safety', 'tanggal' => '2025-06-16', 'lokasi' => 'Plant Cikarang', 'petugas' => 'Simanjuntak', 'avatar' => 'gray',  'status' => 'SELESAI',        'tone' => 'green'],
         ];
     }
 

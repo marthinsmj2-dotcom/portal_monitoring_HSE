@@ -1,7 +1,9 @@
 @php
     $di_kegiatan = request()->routeIs('kegiatan.*');
     $di_temuan   = request()->routeIs('temuan.*');
+    $di_apd      = request()->routeIs('apd.*');
     $slugAktif   = request()->route('jenis');
+    $halamanApd  = request()->route('halaman') ?? 'data-apd';
 @endphp
 
 <aside class="sidebar">
@@ -23,7 +25,7 @@
             </a>
         </li>
 
-        {{-- Kegiatan HSE: klik teks = halaman akumulasi, klik panah = buka/tutup dropdown --}}
+        {{-- Kegiatan HSE --}}
         <li>
             <div class="menu-link menu-link-split {{ $di_kegiatan ? 'active' : '' }}">
                 <a href="{{ route('kegiatan.index') }}" class="menu-main">
@@ -53,7 +55,7 @@
             </ul>
         </li>
 
-        {{-- Temuan: klik teks = halaman akumulasi, klik panah = buka/tutup dropdown --}}
+        {{-- Temuan --}}
         <li>
             <div class="menu-link menu-link-split {{ $di_temuan ? 'active' : '' }}">
                 <a href="{{ route('temuan.index') }}" class="menu-main">
@@ -66,7 +68,6 @@
                     <i class="bi bi-chevron-right chev"></i>
                 </button>
             </div>
-            
 
             <ul class="submenu collapse list-unstyled {{ $di_temuan ? 'show' : '' }}" id="menuTemuan">
                 <li>
@@ -80,14 +81,33 @@
             </ul>
         </li>
 
+        {{-- APD: klik teks = Data APD, klik panah = buka/tutup dropdown --}}
         <li>
-            <a href="#menuApd" class="menu-link" data-bs-toggle="collapse" aria-expanded="false">
-                <i class="bi bi-shield-fill-check"></i><span>APD</span>
-                <i class="bi bi-chevron-right chev ms-auto"></i>
-            </a>
-            <ul class="submenu collapse list-unstyled" id="menuApd">
-                <li><a href="#">Stok APD</a></li>
-                <li><a href="#">Transaksi APD</a></li>
+            <div class="menu-link menu-link-split {{ $di_apd ? 'active' : '' }}">
+                <a href="{{ route('apd.index') }}" class="menu-main">
+                    <i class="bi bi-shield-check"></i><span>APD</span>
+                </a>
+                <button type="button" class="menu-toggle"
+                        data-bs-toggle="collapse" data-bs-target="#menuApd"
+                        aria-expanded="{{ $di_apd ? 'true' : 'false' }}"
+                        aria-label="Buka submenu APD">
+                    <i class="bi bi-chevron-right chev"></i>
+                </button>
+            </div>
+
+            <ul class="submenu collapse list-unstyled {{ $di_apd ? 'show' : '' }}" id="menuApd">
+                <li>
+                    <a href="{{ route('apd.index', 'data-apd') }}"
+                       class="{{ $di_apd && $halamanApd === 'data-apd' ? 'active' : '' }}">Data APD</a>
+                </li>
+                <li>
+                    <a href="{{ route('apd.index', 'transaksi-stok') }}"
+                       class="{{ $di_apd && $halamanApd === 'transaksi-stok' ? 'active' : '' }}">Transaksi Stok</a>
+                </li>
+                <li>
+                    <a href="{{ route('apd.index', 'monitoring-stok') }}"
+                       class="{{ $di_apd && $halamanApd === 'monitoring-stok' ? 'active' : '' }}">Monitoring Stok</a>
+                </li>
             </ul>
         </li>
 
